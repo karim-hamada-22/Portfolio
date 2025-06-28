@@ -1,0 +1,313 @@
+<app-dashboard-layout>
+  <div class="skills-management">
+    <div class="page-header">
+      <h1 class="page-title">Skills Management</h1>
+      <button (click)="showForm.set(true)" class="btn btn-primary">
+        <svg
+          class="btn-icon"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          ></path>
+        </svg>
+        Add Skill
+      </button>
+    </div>
+
+    <div
+      class="alert"
+      *ngIf="message()"
+      [ngClass]="isSuccess() ? 'alert-success' : 'alert-error'"
+    >
+      {{ message() }}
+    </div>
+
+    <!-- Add/Edit Form -->
+    <div class="form-card" *ngIf="showForm()">
+      <div class="card-header">
+        <h3 class="card-title">{{ editingId() ? 'Edit' : 'Add' }} Skill</h3>
+      </div>
+      <div class="card-content">
+        <form
+          [formGroup]="skillForm"
+          (ngSubmit)="onSubmit()"
+          class="skill-form"
+        >
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name" class="form-label">Skill Name</label>
+              <input
+                id="name"
+                type="text"
+                class="form-input"
+                formControlName="name"
+                placeholder="e.g., React"
+              />
+            </div>
+            <div class="form-group">
+              <label for="category" class="form-label">Category</label>
+              <select
+                id="category"
+                class="form-input"
+                formControlName="category"
+              >
+                <option value="frontend">Frontend Development</option>
+                <option value="backend">Backend Development</option>
+                <option value="database">Database & Storage</option>
+                <option value="tools">Tools & Technologies</option>
+                <option value="soft-skills">Soft Skills</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="proficiency" class="form-label"
+                >Proficiency (1-100)</label
+              >
+              <input
+                id="proficiency"
+                type="number"
+                min="1"
+                max="100"
+                class="form-input"
+                formControlName="proficiency"
+              />
+            </div>
+            <div class="form-group">
+              <label for="yearsOfExperience" class="form-label"
+                >Years of Experience</label
+              >
+              <input
+                id="yearsOfExperience"
+                type="number"
+                min="0"
+                class="form-input"
+                formControlName="yearsOfExperience"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description" class="form-label">Description</label>
+            <textarea
+              id="description"
+              class="form-textarea"
+              rows="3"
+              formControlName="description"
+              placeholder="Brief description of your experience with this skill"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="icon" class="form-label">Icon URL (optional)</label>
+            <input
+              id="icon"
+              type="url"
+              class="form-input"
+              formControlName="icon"
+              placeholder="https://example.com/icon.png"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                formControlName="featured"
+                class="checkbox-input"
+              />
+              <span class="checkbox-text">Featured Skill</span>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="loading() || skillForm.invalid"
+            >
+              <span class="loading-spinner" *ngIf="loading()"></span>
+              {{ loading() ? (editingId() ? 'Updating...' : 'Creating...') :
+              (editingId() ? 'Update' : 'Create') }} Skill
+            </button>
+            <button
+              type="button"
+              (click)="cancelEdit()"
+              class="btn btn-outline"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Skills List -->
+    <div class="skills-list-card">
+      <div class="card-header">
+        <h3 class="card-title">Skills ({{ skills().length }})</h3>
+      </div>
+      <div class="card-content">
+        <!-- Loading State -->
+        <div *ngIf="skillsLoading()" class="loading-state">
+          <div class="loading-spinner-large"></div>
+          <p>Loading skills...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div
+          *ngIf="!skillsLoading() && skills().length === 0"
+          class="empty-state"
+        >
+          <svg
+            class="empty-icon"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+            ></path>
+          </svg>
+          <p class="empty-text">No skills found</p>
+          <p class="empty-subtext">Create your first skill to get started</p>
+          <button (click)="showForm.set(true)" class="btn btn-primary">
+            Add Your First Skill
+          </button>
+        </div>
+
+        <!-- Skills Grid -->
+        <div
+          *ngIf="!skillsLoading() && skills().length > 0"
+          class="skills-grid"
+        >
+          <div
+            *ngFor="let skill of skills(); let i = index; trackBy: trackByIndex"
+            class="skill-card"
+          >
+            <div *ngIf="skill" class="skill-content">
+              <!-- Skill Header -->
+              <div class="skill-header">
+                <div class="skill-info">
+                  <h4 class="skill-name">
+                    {{ skill.name || 'Unknown Skill' }}
+                  </h4>
+                  <p class="skill-category">
+                    {{ getCategoryDisplay(skill.category) }}
+                  </p>
+                </div>
+                <div class="skill-actions">
+                  <button
+                    (click)="editSkill(skill)"
+                    class="btn btn-outline btn-sm"
+                  >
+                    <svg
+                      class="btn-icon-sm"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      ></path>
+                    </svg>
+                    Edit
+                  </button>
+                  <button
+                    (click)="deleteSkill(skill._id )"
+                    class="btn btn-outline btn-sm btn-danger"
+                  >
+                    <svg
+                      class="btn-icon-sm"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      ></path>
+                    </svg>
+                    Delete
+                  </button>
+                </div>
+              </div>
+
+              <!-- Proficiency Bar -->
+              <div class="skill-proficiency" *ngIf="skill.proficiency">
+                <div class="proficiency-header">
+                  <span class="proficiency-label">Proficiency</span>
+                  <span class="proficiency-value"
+                    >{{ skill.proficiency }}%</span
+                  >
+                </div>
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    [style.width.%]="skill.proficiency"
+                  ></div>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="skill-description" *ngIf="skill.description">
+                <p class="description-text">{{ skill.description }}</p>
+              </div>
+
+              <!-- Meta Info -->
+              <div class="skill-meta">
+                <span
+                  class="meta-item"
+                  *ngIf="skill.yearsOfExperience && skill.yearsOfExperience > 0"
+                >
+                  <svg
+                    class="meta-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  {{ skill.yearsOfExperience }} years
+                </span>
+                <span class="featured-badge" *ngIf="skill.featured">
+                  <svg
+                    class="featured-icon"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                    ></path>
+                  </svg>
+                  Featured
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-dashboard-layout>

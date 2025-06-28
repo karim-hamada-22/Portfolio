@@ -1,0 +1,237 @@
+<app-dashboard-layout>
+  <div class="messages-management">
+    <div class="page-header">
+      <h1 class="page-title">Messages</h1>
+      <div class="filter-buttons">
+        <button
+          (click)="filterStatus.set('')"
+          [class]="'btn btn-sm ' + (filterStatus() === '' ? 'btn-primary' : 'btn-outline')"
+        >
+          All ({{ contacts().length }})
+        </button>
+        <button
+          (click)="filterStatus.set('unread')"
+          [class]="'btn btn-sm ' + (filterStatus() === 'unread' ? 'btn-primary' : 'btn-outline')"
+        >
+          Unread
+        </button>
+        <button
+          (click)="filterStatus.set('read')"
+          [class]="'btn btn-sm ' + (filterStatus() === 'read' ? 'btn-primary' : 'btn-outline')"
+        >
+          Read
+        </button>
+        <button
+          (click)="filterStatus.set('replied')"
+          [class]="'btn btn-sm ' + (filterStatus() === 'replied' ? 'btn-primary' : 'btn-outline')"
+        >
+          Replied
+        </button>
+      </div>
+    </div>
+
+    <div
+      class="alert"
+      *ngIf="message()"
+      [ngClass]="isSuccess() ? 'alert-success' : 'alert-error'"
+    >
+      {{ message() }}
+    </div>
+
+    <div class="messages-card">
+      <div class="card-header">
+        <h3 class="card-title">Contact Messages</h3>
+      </div>
+      <div class="card-content">
+        <!-- Loading State -->
+        <div *ngIf="loading()" class="loading-state">
+          <div class="loading-spinner-large"></div>
+          <p>Loading messages...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div
+          *ngIf="!loading() && filteredContacts().length === 0"
+          class="empty-state"
+        >
+          <svg
+            class="empty-icon"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+            ></path>
+          </svg>
+          <p class="empty-text">No messages found</p>
+          <p class="empty-subtext">
+            Messages from your contact form will appear here
+          </p>
+        </div>
+
+        <!-- Messages List -->
+        <div
+          *ngIf="!loading() && filteredContacts().length > 0"
+          class="messages-list"
+        >
+          <div
+            *ngFor="let contact of filteredContacts(); let i = index; trackBy: trackByIndex"
+            class="message-item"
+            [class.unread]="contact && contact.status === 'unread'"
+          >
+            <div *ngIf="contact" class="message-content">
+              <div class="message-header">
+                <div class="sender-info">
+                  <div class="sender-details">
+                    <h4 class="sender-name">
+                      {{ contact.name || 'Unknown Sender' }}
+                    </h4>
+                    <span class="sender-email"
+                      >{{ contact.email || 'No email' }}</span
+                    >
+                  </div>
+                  <span
+                    class="status-badge"
+                    [ngClass]="getStatusClass(contact.status)"
+                  >
+                    <svg
+                      *ngIf="contact.status === 'unread'"
+                      class="status-icon"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      ></path>
+                    </svg>
+                    <svg
+                      *ngIf="contact.status === 'read'"
+                      class="status-icon"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path>
+                    </svg>
+                    <svg
+                      *ngIf="contact.status === 'replied'"
+                      class="status-icon"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+                      ></path>
+                    </svg>
+                    {{ contact.status || 'unread' }}
+                  </span>
+                </div>
+                <div class="message-actions">
+                  <button
+                    *ngIf="contact.status === 'unread'"
+                    (click)="updateStatus(contact._id || '', 'read')"
+                    class="btn btn-outline btn-sm"
+                  >
+                    <svg
+                      class="btn-icon-sm"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path>
+                    </svg>
+                    Mark Read
+                  </button>
+                  <button
+                    *ngIf="contact.status === 'read'"
+                    (click)="updateStatus(contact._id || '', 'replied')"
+                    class="btn btn-outline btn-sm"
+                  >
+                    <svg
+                      class="btn-icon-sm"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+                      ></path>
+                    </svg>
+                    Mark Replied
+                  </button>
+                  <button
+                    (click)="deleteMessage(contact._id || '')"
+                    class="btn btn-outline btn-sm btn-danger"
+                  >
+                    <svg
+                      class="btn-icon-sm"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      ></path>
+                    </svg>
+                    Delete
+                  </button>
+                </div>
+              </div>
+
+              <h5 class="message-subject">
+                {{ contact.subject || 'No subject' }}
+              </h5>
+              <p class="message-text">
+                {{ contact.message || 'No message content' }}
+              </p>
+              <p class="message-date">
+                <svg
+                  class="date-icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                {{ formatDate(contact.createdAt || '') }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-dashboard-layout>

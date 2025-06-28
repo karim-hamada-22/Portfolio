@@ -1,0 +1,268 @@
+<app-dashboard-layout>
+  <div class="personal-info-management">
+    <h1 class="page-title">Personal Information</h1>
+
+    <div
+      class="alert"
+      *ngIf="message()"
+      [ngClass]="isSuccess() ? 'alert-success' : 'alert-error'"
+    >
+      {{ message() }}
+    </div>
+
+    <div class="form-card">
+      <div class="card-header">
+        <h3 class="card-title">Personal Details</h3>
+        <p class="card-description">
+          This information will be displayed on your portfolio homepage.
+        </p>
+      </div>
+      <div class="card-content">
+        <form
+          [formGroup]="personalInfoForm"
+          (ngSubmit)="onSubmit()"
+          class="personal-info-form"
+        >
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fullName" class="form-label">Full Name</label>
+              <input
+                id="fullName"
+                type="text"
+                class="form-input"
+                formControlName="fullName"
+              />
+            </div>
+            <div class="form-group">
+              <label for="title" class="form-label">Professional Title</label>
+              <input
+                id="title"
+                type="text"
+                class="form-input"
+                formControlName="title"
+                placeholder="e.g., Full Stack Developer"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="bio" class="form-label">Bio</label>
+            <textarea
+              id="bio"
+              class="form-textarea"
+              rows="4"
+              formControlName="bio"
+              placeholder="Tell visitors about yourself..."
+            ></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email" class="form-label">Email</label>
+              <input
+                id="email"
+                type="email"
+                class="form-input"
+                formControlName="email"
+              />
+            </div>
+            <div class="form-group">
+              <label for="phone" class="form-label">Phone</label>
+              <input
+                id="phone"
+                type="tel"
+                class="form-input"
+                formControlName="phone"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="location" class="form-label">Location</label>
+              <input
+                id="location"
+                type="text"
+                class="form-input"
+                formControlName="location"
+                placeholder="City, Country"
+              />
+            </div>
+            <div class="form-group">
+              <label for="website" class="form-label">Website</label>
+              <input
+                id="website"
+                type="url"
+                class="form-input"
+                formControlName="website"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="profileImage" class="form-label"
+                >Profile Image URL</label
+              >
+              <input
+                id="profileImage"
+                type="url"
+                class="form-input"
+                formControlName="profileImage"
+              />
+            </div>
+            <div class="form-group">
+              <label for="resume" class="form-label">Resume URL</label>
+              <input
+                id="resume"
+                type="url"
+                class="form-input"
+                formControlName="resume"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="availability" class="form-label"
+              >Availability Status</label
+            >
+            <select
+              id="availability"
+              class="form-input"
+              formControlName="availability"
+            >
+              <option value="available">Available for work</option>
+              <option value="busy">Busy</option>
+              <option value="not-available">Not available</option>
+            </select>
+          </div>
+
+          <!-- Social Links -->
+          <div class="social-links-section">
+            <h4 class="section-title">Social Links</h4>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="linkedin" class="form-label">LinkedIn</label>
+                <input
+                  id="linkedin"
+                  type="url"
+                  class="form-input"
+                  formControlName="linkedin"
+                  placeholder="https://linkedin.com/in/username"
+                />
+              </div>
+              <div class="form-group">
+                <label for="github" class="form-label">GitHub</label>
+                <input
+                  id="github"
+                  type="url"
+                  class="form-input"
+                  formControlName="github"
+                  placeholder="https://github.com/username"
+                />
+              </div>
+            </div>
+
+            <div class="form-row-three">
+              <div class="form-group">
+                <label for="twitter" class="form-label">Twitter</label>
+                <input
+                  id="twitter"
+                  type="url"
+                  class="form-input"
+                  formControlName="twitter"
+                  placeholder="https://twitter.com/username"
+                />
+              </div>
+              <div class="form-group">
+                <label for="instagram" class="form-label">Instagram</label>
+                <input
+                  id="instagram"
+                  type="url"
+                  class="form-input"
+                  formControlName="instagram"
+                  placeholder="https://instagram.com/username"
+                />
+              </div>
+              <div class="form-group">
+                <label for="facebook" class="form-label">Facebook</label>
+                <input
+                  id="facebook"
+                  type="url"
+                  class="form-input"
+                  formControlName="facebook"
+                  placeholder="https://facebook.com/username"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="loading() || personalInfoForm.invalid"
+            >
+              <span class="loading-spinner" *ngIf="loading()"></span>
+              {{ loading() ? 'Saving...' : 'Save Personal Information' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview-card" *ngIf="personalInfo()">
+      <div class="card-header">
+        <h3 class="card-title">Preview</h3>
+        <p class="card-description">
+          This is how your information will appear on your portfolio.
+        </p>
+      </div>
+      <div class="card-content">
+        <div class="preview-content">
+          <div class="preview-avatar" *ngIf="personalInfo()?.profileImage">
+            <img
+              [src]="personalInfo()?.profileImage"
+              [alt]="personalInfo()?.fullName"
+              class="avatar-image"
+            />
+          </div>
+          <h2 class="preview-name">{{ personalInfo()?.fullName }}</h2>
+          <p class="preview-title">{{ personalInfo()?.title }}</p>
+          <p class="preview-bio">{{ personalInfo()?.bio }}</p>
+          <p class="preview-location" *ngIf="personalInfo()?.location">
+            📍 {{ personalInfo()?.location }}
+          </p>
+          <div class="preview-social" *ngIf="personalInfo()?.socialLinks">
+            <a
+              *ngIf="personalInfo()?.socialLinks?.github"
+              [href]="personalInfo()?.socialLinks?.github"
+              target="_blank"
+              class="social-link"
+            >
+              GitHub
+            </a>
+            <a
+              *ngIf="personalInfo()?.socialLinks?.linkedin"
+              [href]="personalInfo()?.socialLinks?.linkedin"
+              target="_blank"
+              class="social-link"
+            >
+              LinkedIn
+            </a>
+            <a
+              *ngIf="personalInfo()?.socialLinks?.twitter"
+              [href]="personalInfo()?.socialLinks?.twitter"
+              target="_blank"
+              class="social-link"
+            >
+              Twitter
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-dashboard-layout>

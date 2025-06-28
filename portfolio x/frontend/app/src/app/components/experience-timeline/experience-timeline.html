@@ -1,0 +1,84 @@
+<div class="timeline-container">
+  <div class="loading-state" *ngIf="loading()">Loading experience...</div>
+
+  <div class="empty-state" *ngIf="!loading() && experiences().length === 0">
+    <p>No experience found. Add some experience in the dashboard!</p>
+  </div>
+
+  <div class="timeline" *ngIf="!loading() && experiences().length > 0">
+    <!-- Timeline line -->
+    <div class="timeline-line"></div>
+
+    <div class="timeline-items">
+      <div
+        class="timeline-item"
+        *ngFor="let experience of experiences(); trackBy: trackByExperienceId"
+      >
+        <!-- Timeline dot -->
+        <div class="timeline-dot"></div>
+
+        <!-- Content -->
+        <div class="timeline-content">
+          <div class="experience-header">
+            <div class="experience-info">
+              <h4 class="job-title">{{ experience.jobTitle }}</h4>
+              <h5 class="company-name">{{ experience.company }}</h5>
+              <p class="location" *ngIf="experience.location">
+                {{ experience.location }}
+              </p>
+            </div>
+            <div class="experience-meta">
+              <p class="date-range">
+                {{ formatDate(experience.startDate) }} - {{ experience.current ?
+                'Present' : formatDate(experience.endDate!) }}
+              </p>
+              <span class="employment-type">
+                {{ experience.employmentType.replace('-', ' ') | titlecase }}
+              </span>
+            </div>
+          </div>
+
+          <p class="experience-description">{{ experience.description }}</p>
+
+          <div
+            class="responsibilities-section"
+            *ngIf="experience.responsibilities.length > 0"
+          >
+            <h6 class="section-title">Key Responsibilities:</h6>
+            <ul class="responsibilities-list">
+              <li *ngFor="let responsibility of experience.responsibilities">
+                {{ responsibility }}
+              </li>
+            </ul>
+          </div>
+
+          <div
+            class="achievements-section"
+            *ngIf="experience.achievements.length > 0"
+          >
+            <h6 class="section-title">Key Achievements:</h6>
+            <ul class="achievements-list">
+              <li *ngFor="let achievement of experience.achievements">
+                {{ achievement }}
+              </li>
+            </ul>
+          </div>
+
+          <div
+            class="technologies-section"
+            *ngIf="experience.technologies.length > 0"
+          >
+            <div class="tech-badges">
+              <span
+                class="tech-badge"
+                *ngFor="let tech of experience.technologies"
+              >
+                {{ tech }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

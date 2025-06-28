@@ -1,0 +1,47 @@
+<div class="skills-container">
+  <div class="loading-state" *ngIf="loading()">Loading skills...</div>
+
+  <div class="empty-state" *ngIf="!loading() && skillsByCategory.size === 0">
+    <p>No skills found. Add some skills in the dashboard!</p>
+  </div>
+
+  <div
+    class="skills-categories"
+    *ngIf="!loading() && skillsByCategory.size > 0"
+  >
+    <div
+      class="skill-category"
+      *ngFor="let category of skillCategories"
+      [class.hidden]="!skillsByCategory.get(category.key)?.length"
+    >
+      <h4 class="category-title">{{ category.label }}</h4>
+
+      <div class="skills-grid">
+        <div
+          class="skill-card"
+          *ngFor="let skill of skillsByCategory.get(category.key)"
+        >
+          <div class="skill-header">
+            <h5 class="skill-name">{{ skill.name }}</h5>
+            <span class="skill-percentage">{{ skill.proficiency }}%</span>
+          </div>
+
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              [style.width.%]="skill.proficiency"
+            ></div>
+          </div>
+
+          <p class="skill-description" *ngIf="skill.description">
+            {{ skill.description }}
+          </p>
+
+          <p class="skill-experience" *ngIf="skill.yearsOfExperience > 0">
+            {{ skill.yearsOfExperience }} years experience
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

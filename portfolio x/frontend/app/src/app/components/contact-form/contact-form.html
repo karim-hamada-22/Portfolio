@@ -1,0 +1,127 @@
+<div class="contact-form-container">
+  <div class="form-header">
+    <h3 class="form-title">Send me a message</h3>
+    <p class="form-description">
+      I'd love to hear from you. Send me a message and I'll respond as soon as
+      possible.
+    </p>
+  </div>
+
+  <div class="form-content">
+    <div
+      class="alert"
+      *ngIf="message()"
+      [ngClass]="isSuccess() ? 'alert-success' : 'alert-error'"
+    >
+      {{ message() }}
+    </div>
+
+    <form
+      [formGroup]="contactForm"
+      (ngSubmit)="onSubmit()"
+      class="contact-form"
+    >
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name" class="form-label">Name</label>
+          <input
+            id="name"
+            type="text"
+            class="form-input"
+            formControlName="name"
+            [class.error]="getFieldError('name')"
+            placeholder="Your full name"
+          />
+          <div class="error-message" *ngIf="getFieldError('name')">
+            {{ getFieldError('name') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <input
+            id="email"
+            type="email"
+            class="form-input"
+            formControlName="email"
+            [class.error]="getFieldError('email')"
+            placeholder="your.email@example.com"
+          />
+          <div class="error-message" *ngIf="getFieldError('email')">
+            {{ getFieldError('email') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="subject" class="form-label">Subject</label>
+        <input
+          id="subject"
+          type="text"
+          class="form-input"
+          formControlName="subject"
+          [class.error]="getFieldError('subject')"
+          placeholder="What's this about?"
+        />
+        <div class="error-message" *ngIf="getFieldError('subject')">
+          {{ getFieldError('subject') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="message" class="form-label">Message</label>
+        <textarea
+          id="message"
+          class="form-textarea"
+          rows="5"
+          formControlName="message"
+          [class.error]="getFieldError('message')"
+          placeholder="Tell me about your project or just say hello..."
+        ></textarea>
+        <div class="error-message" *ngIf="getFieldError('message')">
+          {{ getFieldError('message') }}
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="submit-button"
+        [disabled]="loading() || contactForm.invalid"
+        [class.loading]="loading()"
+      >
+        <span class="button-content">
+          <svg class="loading-spinner" *ngIf="loading()" viewBox="0 0 24 24">
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+              fill="none"
+              opacity="0.25"
+            />
+            <path
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            />
+          </svg>
+          <svg
+            class="send-icon"
+            *ngIf="!loading()"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            />
+          </svg>
+          {{ loading() ? 'Sending...' : 'Send Message' }}
+        </span>
+      </button>
+    </form>
+  </div>
+</div>

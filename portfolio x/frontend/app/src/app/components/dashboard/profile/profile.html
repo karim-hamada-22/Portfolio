@@ -1,0 +1,113 @@
+<app-dashboard-layout>
+  <div class="profile-management">
+    <h1 class="page-title">Profile</h1>
+
+    <div
+      class="alert"
+      *ngIf="message()"
+      [ngClass]="isSuccess() ? 'alert-success' : 'alert-error'"
+    >
+      {{ message() }}
+    </div>
+
+    <div class="profile-grid">
+      <!-- Profile Info -->
+      <div class="profile-card">
+        <div class="card-header">
+          <h3 class="card-title">Profile Information</h3>
+        </div>
+        <div class="card-content">
+          <div class="profile-info" *ngIf="user()">
+            <div class="info-item">
+              <label class="info-label">Username</label>
+              <p class="info-value">{{ user()?.username }}</p>
+            </div>
+            <div class="info-item">
+              <label class="info-label">Email</label>
+              <p class="info-value">{{ user()?.email }}</p>
+            </div>
+            <div class="info-item">
+              <label class="info-label">Role</label>
+              <span
+                class="role-badge"
+                [ngClass]="user()?.role === 'admin' ? 'role-admin' : 'role-user'"
+              >
+                {{ user()?.role }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Settings -->
+      <div class="settings-card">
+        <div class="card-header">
+          <h3 class="card-title">Account Settings</h3>
+        </div>
+        <div class="card-content">
+          <div class="settings-content">
+            <div class="status-item status-active">
+              <h4 class="status-title">Account Status</h4>
+              <p class="status-description">
+                Your account is active and in good standing.
+              </p>
+            </div>
+
+            <div
+              class="status-item"
+              [ngClass]="user()?.role === 'admin' ? 'status-admin' : 'status-user'"
+            >
+              <h4 class="status-title">
+                {{ user()?.role === 'admin' ? 'Admin Privileges' : 'User Access'
+                }}
+              </h4>
+              <p class="status-description">
+                {{ user()?.role === 'admin' ? 'You have full access to manage
+                portfolio content and view messages.' : 'Contact an
+                administrator for content management permissions.' }}
+              </p>
+            </div>
+
+            <div class="quick-actions">
+              <h4 class="actions-title">Quick Actions</h4>
+              <div class="actions-list">
+                <button class="action-btn">
+                  <svg
+                    class="action-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 7a2 2 0 012 2m0 0v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9a2 2 0 012-2m6 0V7a2 2 0 00-2-2H9a2 2 0 00-2 2v2m6 0H9"
+                    ></path>
+                  </svg>
+                  Change Password
+                </button>
+                <button (click)="logout()" class="action-btn logout-btn">
+                  <svg
+                    class="action-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    ></path>
+                  </svg>
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-dashboard-layout>
