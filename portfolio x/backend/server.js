@@ -34,10 +34,10 @@ app.use((req, res, next) => {
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log("✅ Connected to MongoDB");
+    console.log(" Connected to MongoDB");
   })
   .catch((error) => {
-    console.error("❌ MongoDB connection error:", error);
+    console.error(" MongoDB connection error:", error);
   });
 
 // Routes
@@ -60,7 +60,7 @@ app.get("/api/health", (req, res) => {
 
 // Error handling middleware
 app.use((error, req, res, next) => {
-  console.error("❌ Server error:", error);
+  console.error(" Server error:", error);
   res.status(500).json({
     message: "Internal server error",
     error:
@@ -79,7 +79,5 @@ app.use("*", (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`🔐 Auth endpoint: http://localhost:${PORT}/api/auth/login`);
+  console.log(`Server running on port ${PORT}`);
 });
